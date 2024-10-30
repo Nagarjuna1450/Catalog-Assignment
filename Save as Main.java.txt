@@ -1,0 +1,56 @@
+// Save as Main.java
+import org.json.JSONObject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+// Main class to run the program
+public class Main {
+    public static void main(String[] args) {
+        try {
+            String content = new String(Files.readAllBytes(
+                    Paths.get("testcase1.json") // Path to JSON file
+            ));
+            JSONObject jsonObject = new JSONObject(content);
+
+            // Create an instance of ShamirSecretSharing and call the method
+            ShamirSecretSharing sss = new ShamirSecretSharing();
+            sss.findConstantTerm(jsonObject);
+
+        } catch (IOException e) {
+            System.err.println("Error reading the JSON file: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+}
+
+// ShamirSecretSharing class to process JSON data
+class ShamirSecretSharing {
+
+    // Method to find and print the constant term from the JSON
+    public void findConstantTerm(JSONObject jsonObject) {
+        if (!jsonObject.has("keys")) {
+            System.err.println("Error: 'keys' not found in the JSON object.");
+            return;
+        }
+
+        // Extract "n" and "k" from the "keys" object
+        JSONObject keys = jsonObject.getJSONObject("keys");
+        int n = keys.getInt("n");
+        int k = keys.getInt("k");
+
+        System.out.println("n = " + n + ", k = " + k);
+
+        // Process other entries in the JSON
+        for (String key : jsonObject.keySet()) {
+            if (!key.equals("keys")) {
+                JSONObject entry = jsonObject.getJSONObject(key);
+                String base = entry.getString("base");
+                String value = entry.getString("value");
+
+                System.out.printf("Entry %s: base = %s, value = %s%n", key, base, value);
+            }
+        }
+    }
+}
